@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <ThingDef ParentName="Blocky_Props_Base">
+    <defName>Blocky_Props_AcaciaSign</defName>
+    <label>acacia sign</label>
+    <designationCategory>Blocky</designationCategory>
+    <graphicData>
+      <texPath>Blocky/Signs/AcaciaSign</texPath>
+    </graphicData>
+  </ThingDef>
+
+  <ThingDef ParentName="Blocky_Props_Base">
+    <defName>Blocky_Props_Sign</defName>
+    <label>sign</label>
+    <designationCategory>Blocky</designationCategory>
+    <graphicData>
+      <texPath>Blocky/Signs/Sign</texPath>
+    </graphicData>
+    <stuffCategories>
+      <li>Metallic</li>
+      <li>Woody</li>
+      <li>Stony</li>
+    </stuffCategories>
+    <costStuffCount>1</costStuffCount>
+
+    <drawGUIOverlay>true</drawGUIOverlay>
+    <comps><li Class="Blocky.Signs.CompProperties_Nameable"/></comps>
+  </ThingDef>
+</Defs>
