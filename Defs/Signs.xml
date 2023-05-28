@@ -10,7 +10,7 @@
   </ThingDef>
 
   <ThingDef ParentName="Blocky_Props_Base">
-    <defName>Blocky_Props_Sign</defName>
+    <defName>Blocky_Signs_Sign</defName>
     <label>sign</label>
     <designationCategory>Blocky</designationCategory>
     <graphicData>
@@ -24,6 +24,32 @@
     <costStuffCount>1</costStuffCount>
 
     <drawGUIOverlay>true</drawGUIOverlay>
-    <comps><li Class="Blocky.Signs.CompProperties_Nameable"/></comps>
+    <comps><li Class="Blocky.Signs.CompProperties_Nameable"><labelShift>0.32</labelShift></li></comps>
+  </ThingDef>
+
+  <ThingDef ParentName="Blocky_Props_Base">
+    <defName>Blocky_Signs_WallSign</defName>
+    <label>wall sign</label>
+    <designationCategory>Blocky</designationCategory>
+    <graphicData>
+      <texPath>Blocky/Signs/WallSign</texPath>
+    </graphicData>
+    <stuffCategories>
+      <li>Metallic</li>
+      <li>Woody</li>
+      <li>Stony</li>
+    </stuffCategories>
+    <costStuffCount>1</costStuffCount>
+
+    <building>
+      <isEdifice>false</isEdifice>
+      <canPlaceOverWall>true</canPlaceOverWall>
+    </building>
+    <clearBuildingArea>false</clearBuildingArea>
+
+    <uiIconOffset>(0, -0.1)</uiIconOffset>
+
+    <drawGUIOverlay>true</drawGUIOverlay>
+    <comps><li Class="Blocky.Signs.CompProperties_Nameable"><labelShift>-0.11</labelShift></li></comps>
   </ThingDef>
 </Defs>

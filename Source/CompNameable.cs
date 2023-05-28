@@ -52,7 +52,7 @@ public class CompNameable : ThingComp {
         if( name == "" || name == null ) return;
 
         if ((int)Find.CameraDriver.CurrentZoom <= ModConfig.Settings.maxZoom ){
-            GenMapUI.DrawThingLabel(GenMapUI.LabelDrawPosFor(parent, 0.32f), name, color);
+            GenMapUI.DrawThingLabel(GenMapUI.LabelDrawPosFor(parent, Props.labelShift), name, color);
         }
     }
 
