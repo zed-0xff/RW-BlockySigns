@@ -7,7 +7,7 @@ public class Dialog_Rename : Verse.Dialog_Rename {
 
     public Dialog_Rename(CompNameable nameable) {
         this.nameable = nameable;
-        curName = nameable.name;
+        curName = nameable.Name;
     }
 
     protected override AcceptanceReport NameIsValid(string name) {
@@ -15,6 +15,6 @@ public class Dialog_Rename : Verse.Dialog_Rename {
     }
 
     protected override void SetName(string name) {
-        nameable.name = name;
+        nameable.Name = name;
     }
 }

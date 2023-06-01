@@ -23,10 +23,20 @@
     </stuffCategories>
     <costStuffCount>1</costStuffCount>
 
+    <drawerType>MapMeshAndRealTime</drawerType>
     <drawGUIOverlay>true</drawGUIOverlay>
-    <comps><li Class="Blocky.Signs.CompProperties_Nameable"><labelShift>0.32</labelShift></li></comps>
+    <comps>
+      <li Class="Blocky.Signs.CompProperties_Nameable">
+        <labelShift>0.32</labelShift>
+        <leftTexPath>Blocky/Signs/BorderlessLeft</leftTexPath>
+        <centerTexPath>Blocky/Signs/BorderlessCenter</centerTexPath>
+        <rightTexPath>Blocky/Signs/BorderlessRight</rightTexPath>
+      </li>
+    </comps>
   </ThingDef>
 
+  <!-- FIXME: shadow -->
+  <!-- FIXME: common parent -->
   <ThingDef ParentName="Blocky_Props_Base">
     <defName>Blocky_Signs_WallSign</defName>
     <label>wall sign</label>
@@ -49,7 +59,15 @@
 
     <uiIconOffset>(0, -0.1)</uiIconOffset>
 
+    <drawerType>MapMeshAndRealTime</drawerType>
     <drawGUIOverlay>true</drawGUIOverlay>
-    <comps><li Class="Blocky.Signs.CompProperties_Nameable"><labelShift>-0.11</labelShift></li></comps>
+    <comps>
+      <li Class="Blocky.Signs.CompProperties_Nameable">
+        <labelShift>-0.11</labelShift>
+        <leftTexPath>Blocky/Signs/BorderlessLeft</leftTexPath>
+        <centerTexPath>Blocky/Signs/BorderlessCenter</centerTexPath>
+        <rightTexPath>Blocky/Signs/BorderlessRight</rightTexPath>
+      </li>
+    </comps>
   </ThingDef>
 </Defs>
