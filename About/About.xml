@@ -12,13 +12,13 @@
 [url=https://ko-fi.com/K3K81Z3W5][img]https://i.imgur.com/Utx6OIH.png[/img][/url]</description>
   <modDependencies>
     <li>
-      <packageId>Blocky.Props</packageId>
-      <displayName>Blocky Props</displayName>
-      <steamWorkshopUrl>steam://url/CommunityFilePage/FIXME</steamWorkshopUrl>
-      <downloadUrl>FIXME</downloadUrl>
+      <packageId>Blocky.Core</packageId>
+      <displayName>Blocky Core</displayName>
+      <steamWorkshopUrl>steam://url/CommunityFilePage/2983955822</steamWorkshopUrl>
+      <downloadUrl>https://github.com/zed-0xff/RW-BlockyCore</downloadUrl>
     </li>
   </modDependencies>
   <loadAfter>
-    <li>Blocky.Props</li>
+    <li>Blocky.Core</li>
   </loadAfter>
 </ModMetaData>

@@ -15,27 +15,21 @@ public static class Utils {
     }
 
     // draw label with custom BG texture/color
-    public static void DrawCustomThingLabel(Vector2 screenPos, string text, Color textColor, Color? bgColor, Texture2D bgTex, GameFont font = GameFont.Tiny, bool debug = false) {
+    public static void DrawCustomThingLabel(Vector2 screenPos, string text, Color textColor, Color? bgColor, Texture2D bgTex = null, GameFont font = GameFont.Tiny, bool debug = false) {
         Text.Font = font;
-        float x = Text.CalcSize(text).x;
-        float pad = (Text.TinyFontSupported && font == GameFont.Tiny ? 2 : 3);
-        float height = (Text.TinyFontSupported && font == GameFont.Tiny ? 13 : 16);
+        var textSize = Text.CalcSize(text);
+        float pad = 4;
 
-//        if( bgTex != null ){
-//            var rect = new Rect(screenPos.x - x / 2f - pad, screenPos.y-3, x + pad * 2f, height+4);
-//            GUI.color = Color.black;
-//            Widgets.DrawBox(rect.ExpandedBy(1), 1);
-//            GUI.color = bgColor.Value;
-//            GUI.DrawTexture(rect, bgTex);
-//
-//            if( debug ){
-//                GUI.DrawTexture(new Rect(10,110,100,100), bgTex);
-//            }
-//        }
+        if( bgColor != null ){
+            var rect = new Rect(screenPos.x - textSize.x / 2 - pad, screenPos.y, textSize.x + pad * 2, textSize.y);
+            Widgets.DrawBoxSolid(rect.ExpandedBy(1), Color.black);
+            GUI.color = bgColor.Value;
+            GUI.DrawTexture(rect, bgTex ?? BaseContent.WhiteTex);
+        }
 
         GUI.color = textColor;
         Text.Anchor = TextAnchor.UpperCenter;
-        Widgets.Label(new Rect(screenPos.x - x / 2f, screenPos.y - 3f, x, 999f), text);
+        Widgets.Label(new Rect(screenPos.x - textSize.x / 2, screenPos.y, textSize.x, 999f), text);
         GUI.color = Color.white;
         Text.Anchor = TextAnchor.UpperLeft;
         Text.Font = GameFont.Small;

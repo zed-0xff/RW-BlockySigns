@@ -36,8 +36,8 @@
       <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="Blocky_Props">
-      <HintPath>../../BlockyProps/Assemblies/BlockyProps.dll</HintPath>
+    <Reference Include="Blocky_Core">
+      <HintPath>../../BlockyCore/Assemblies/BlockyCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

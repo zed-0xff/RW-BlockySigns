@@ -1,72 +1,59 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
-  <ThingDef ParentName="Blocky_Props_Base">
-    <defName>Blocky_Props_AcaciaSign</defName>
-    <label>acacia sign</label>
+  <ThingDef Name="Blocky_Signs_Base" ParentName="BuildingBase" Abstract="True">
     <designationCategory>Blocky</designationCategory>
     <graphicData>
-      <texPath>Blocky/Signs/AcaciaSign</texPath>
-    </graphicData>
-  </ThingDef>
-
-  <ThingDef ParentName="Blocky_Props_Base">
-    <defName>Blocky_Signs_Sign</defName>
-    <label>sign</label>
-    <designationCategory>Blocky</designationCategory>
-    <graphicData>
-      <texPath>Blocky/Signs/Sign</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
     </graphicData>
     <stuffCategories>
       <li>Metallic</li>
       <li>Woody</li>
       <li>Stony</li>
     </stuffCategories>
-    <costStuffCount>1</costStuffCount>
-
+    <costStuffCount>30</costStuffCount>
     <drawerType>MapMeshAndRealTime</drawerType>
     <drawGUIOverlay>true</drawGUIOverlay>
+    <rotatable>false</rotatable>
+  </ThingDef>
+
+  <ThingDef ParentName="Blocky_Signs_Base">
+    <defName>Blocky_Signs_Sign</defName>
+    <label>sign</label>
+    <graphicData>
+      <texPath>Blocky/Signs/Sign</texPath>
+      <shadowData>
+        <volume>(0.2, 0.5, 0.2)</volume>
+        <offset>(0,0,-0.23)</offset>
+      </shadowData>
+    </graphicData>
     <comps>
       <li Class="Blocky.Signs.CompProperties_Nameable">
-        <labelShift>0.32</labelShift>
-        <leftTexPath>Blocky/Signs/BorderlessLeft</leftTexPath>
-        <centerTexPath>Blocky/Signs/BorderlessCenter</centerTexPath>
-        <rightTexPath>Blocky/Signs/BorderlessRight</rightTexPath>
+        <labelShift>0.38</labelShift>
+        <leftTexPath>Blocky/Signs/Sign_Left</leftTexPath>
+        <centerTexPath>Blocky/Signs/Sign_Center</centerTexPath>
+        <rightTexPath>Blocky/Signs/Sign_Right</rightTexPath>
       </li>
     </comps>
   </ThingDef>
 
-  <!-- FIXME: shadow -->
-  <!-- FIXME: common parent -->
-  <ThingDef ParentName="Blocky_Props_Base">
+  <ThingDef ParentName="Blocky_Signs_Base">
     <defName>Blocky_Signs_WallSign</defName>
     <label>wall sign</label>
-    <designationCategory>Blocky</designationCategory>
     <graphicData>
       <texPath>Blocky/Signs/WallSign</texPath>
     </graphicData>
-    <stuffCategories>
-      <li>Metallic</li>
-      <li>Woody</li>
-      <li>Stony</li>
-    </stuffCategories>
-    <costStuffCount>1</costStuffCount>
-
     <building>
       <isEdifice>false</isEdifice>
       <canPlaceOverWall>true</canPlaceOverWall>
     </building>
     <clearBuildingArea>false</clearBuildingArea>
-
     <uiIconOffset>(0, -0.1)</uiIconOffset>
-
-    <drawerType>MapMeshAndRealTime</drawerType>
-    <drawGUIOverlay>true</drawGUIOverlay>
     <comps>
       <li Class="Blocky.Signs.CompProperties_Nameable">
-        <labelShift>-0.11</labelShift>
-        <leftTexPath>Blocky/Signs/BorderlessLeft</leftTexPath>
-        <centerTexPath>Blocky/Signs/BorderlessCenter</centerTexPath>
-        <rightTexPath>Blocky/Signs/BorderlessRight</rightTexPath>
+        <labelShift>-0.05</labelShift>
+        <leftTexPath>Blocky/Signs/WallSign_Left</leftTexPath>
+        <centerTexPath>Blocky/Signs/WallSign_Center</centerTexPath>
+        <rightTexPath>Blocky/Signs/WallSign_Right</rightTexPath>
       </li>
     </comps>
   </ThingDef>

@@ -43,7 +43,7 @@ public class CompNameable : ThingComp {
             color = color,
             action = delegate
             {
-                Find.WindowStack.Add( new Blocky.Props.Dialog_ColorPicker(color, delegate(Color newColor)
+                Find.WindowStack.Add( new Blocky.Core.Dialog_ColorPicker(color, delegate(Color newColor)
                     {
                     color = newColor;
                     lastSelectedColor = newColor;
@@ -97,13 +97,30 @@ public class CompNameable : ThingComp {
     const float texWidth = 0.5f;
     const float defaultCapacity = 0.75f; // width capacity if non-custom sign
 
+    bool canDrawCustomTex(){
+        return Find.CameraDriver.CurrentZoom <= CameraZoomRange.Close && ModConfig.Settings.fontSize <= 1;
+    }
+
+    int prevStateHash;
+    Vector2 cachedTextSize;
+
+    // prevent flickering
+    float calcNCells(){
+        int stateHash = Gen.HashCombine(ModConfig.Settings.fontSize, name);
+        if( stateHash != prevStateHash ){
+            prevStateHash = stateHash;
+            cachedTextSize = Utils.CalcTextSizeForFont(name, (GameFont)ModConfig.Settings.fontSize);
+        }
+        return cachedTextSize.x / Find.CameraDriver.CellSizePixels;
+    }
+
     public override void PostDraw(){
 		base.PostDraw();
         if( !ModConfig.Settings.useCustomLabelDraw ) return;
-        if ((int)Find.CameraDriver.CurrentZoom > ModConfig.Settings.maxZoom ) return;
+        if (Find.CameraDriver.CellSizePixels < ModConfig.Settings.maxZoom ) return;
+        if (!canDrawCustomTex()) return; // no custom texture draw, just text on bg
 
-        var textSize = Utils.CalcTextSizeForFont(name, (GameFont)ModConfig.Settings.fontSize);
-        float nCells = textSize.x / Find.CameraDriver.CellSizePixels;
+        float nCells = calcNCells();
 
         // 0.05f to prevent flickering
         if( nCells < defaultCapacity - 0.05f ) return;
@@ -119,15 +136,19 @@ public class CompNameable : ThingComp {
         RightGraphic.Draw(parent.DrawPos + new Vector3(x, 1, 0), parent.Rotation, parent);
     }
 
+    public override string CompInspectStringExtra() {
+        return name;
+    }
+
     public override void DrawGUIOverlay(){
         if( name == "" || name == null ) return;
 
-        if ((int)Find.CameraDriver.CurrentZoom <= ModConfig.Settings.maxZoom ){
+        if (Find.CameraDriver.CellSizePixels >= ModConfig.Settings.maxZoom ){
             if( ModConfig.Settings.useCustomLabelDraw ){
-                Utils.DrawCustomThingLabel(GenMapUI.LabelDrawPosFor(parent, Props.labelShift), name, color,
+                float labelShift = Props.labelShift;
+                Utils.DrawCustomThingLabel(GenMapUI.LabelDrawPosFor(parent, labelShift), name, color,
                         debug: Find.Selector.SingleSelectedObject == parent,
-                        bgTex: null,
-                        bgColor: parent.DrawColor,
+                        bgColor: canDrawCustomTex() ? null : parent.DrawColor * 0.8f,
                         font: (GameFont)ModConfig.Settings.fontSize );
             } else {
                 GenMapUI.DrawThingLabel(GenMapUI.LabelDrawPosFor(parent, Props.labelShift), name, color);
