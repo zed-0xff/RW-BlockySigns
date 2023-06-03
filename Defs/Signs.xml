@@ -29,9 +29,6 @@
     <comps>
       <li Class="Blocky.Signs.CompProperties_Nameable">
         <labelShift>0.38</labelShift>
-        <leftTexPath>Blocky/Signs/Sign_Left</leftTexPath>
-        <centerTexPath>Blocky/Signs/Sign_Center</centerTexPath>
-        <rightTexPath>Blocky/Signs/Sign_Right</rightTexPath>
       </li>
     </comps>
   </ThingDef>
@@ -51,9 +48,6 @@
     <comps>
       <li Class="Blocky.Signs.CompProperties_Nameable">
         <labelShift>-0.05</labelShift>
-        <leftTexPath>Blocky/Signs/WallSign_Left</leftTexPath>
-        <centerTexPath>Blocky/Signs/WallSign_Center</centerTexPath>
-        <rightTexPath>Blocky/Signs/WallSign_Right</rightTexPath>
       </li>
     </comps>
   </ThingDef>
