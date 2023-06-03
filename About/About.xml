@@ -20,5 +20,6 @@
   </modDependencies>
   <loadAfter>
     <li>Blocky.Core</li>
+    <li>LWM.DeepStorage</li>
   </loadAfter>
 </ModMetaData>

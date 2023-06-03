@@ -10,6 +10,7 @@ public class Settings : Verse.ModSettings {
     public bool useCustomLabelDraw = true;
     public int fontSize;
     public bool respectLight = true;
+    public bool fixFramesCategory = true;
 
     public override void ExposeData()
     {
@@ -17,6 +18,7 @@ public class Settings : Verse.ModSettings {
         Scribe_Values.Look(ref useCustomLabelDraw, "useCustomLabelDraw", true);
         Scribe_Values.Look(ref fontSize, "fontSize", 0);
         Scribe_Values.Look(ref respectLight, "respectLight", true);
+        Scribe_Values.Look(ref fixFramesCategory, "fixFramesCategory", true);
         base.ExposeData();
     }
 }
@@ -34,6 +36,14 @@ public class SettingsTab : Blocky.Core.SettingsTabBase {
         l.Label("Font size: " + ModConfig.Settings.fontSize);
         ModConfig.Settings.fontSize = (int)l.Slider(ModConfig.Settings.fontSize, 0, 2);
         l.CheckboxLabeled("Respect light level", ref ModConfig.Settings.respectLight);
+
+        l.Gap();
+        bool b0 = ModConfig.Settings.fixFramesCategory;
+        l.CheckboxLabeled("Move Frames back to \"Blocky\" Architect menu category after Deep Storage moves them to \"Storage\"",
+                ref ModConfig.Settings.fixFramesCategory);
+        if( b0 != ModConfig.Settings.fixFramesCategory && ModConfig.Settings.fixFramesCategory ){
+            Init.fixFramesCategory();
+        }
     }
 
     public override void Write(){

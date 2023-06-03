@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ThingDef Name="Blocky_Signs_FrameBase" ParentName="ArtableFurnitureBase" Abstract="True">
+    <designationCategory>Blocky</designationCategory>
+    <description>An elegant display frame. You expected to put some beautiful stuff in it.</description>
+    <thingClass>Blocky.Signs.Building_Frame</thingClass>
+    <altitudeLayer>ItemImportant</altitudeLayer>
+    <passability>Standable</passability>
+    <fillPercent>0.1</fillPercent>
+    <castEdgeShadows>false</castEdgeShadows>
+    <pathCost>5</pathCost>
+    <stuffCategories>
+      <li>Metallic</li>
+      <li>Woody</li>
+      <li>Stony</li>
+    </stuffCategories>
+    <defaultPlacingRot>South</defaultPlacingRot>
+    <statBases>
+      <Flammability>1.0</Flammability>
+      <Beauty>5</Beauty>
+      <Mass>2.5</Mass>
+    </statBases>
+    <building>
+      <isEdifice>false</isEdifice>
+      <canPlaceOverWall>true</canPlaceOverWall>
+      <preventDeteriorationOnTop>true</preventDeteriorationOnTop>
+      <ignoreStoredThingsBeauty>true</ignoreStoredThingsBeauty>
+      <maxItemsInCell>1</maxItemsInCell>
+      <blueprintClass>Blueprint_Storage</blueprintClass>
+      <fixedStorageSettings>
+        <filter>
+          <disallowNotEverStorable>true</disallowNotEverStorable>
+          <categories>
+            <li>Root</li>
+          </categories>
+          <disallowedCategories>
+            <li>Chunks</li>
+            <li>Buildings</li>
+          </disallowedCategories>
+          <specialFiltersToDisallow>
+            <li>AllowLargeCorpses</li>
+          </specialFiltersToDisallow>
+        </filter>
+      </fixedStorageSettings>
+      <defaultStorageSettings>
+      </defaultStorageSettings>
+      <paintable>true</paintable>
+    </building>
+    <inspectorTabs>
+      <li>ITab_Storage</li>
+    </inspectorTabs>
+    <designationHotKey>Misc12</designationHotKey>
+    <staticSunShadowHeight>0</staticSunShadowHeight>
+    <surfaceType>Item</surfaceType>
+    <canOverlapZones>false</canOverlapZones>
+    <researchPrerequisites>
+      <li>ComplexFurniture</li>
+    </researchPrerequisites>
+    <graphicData>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderType>CutoutComplex</shaderType>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <costStuffCount>10</costStuffCount>
+    <costList>
+      <Cloth>5</Cloth>
+    </costList>
+    <size>(1,1)</size>
+    <comps>
+      <li Class="LWM.DeepStorage.Properties" MayRequire="LWM.DeepStorage">
+        <maxNumberStacks>1</maxNumberStacks>
+        <showContents>false</showContents>
+      </li>
+    </comps>
+    <drawerType>MapMeshAndRealTime</drawerType>
+  </ThingDef>
+
+  <ThingDef ParentName="Blocky_Signs_FrameBase">
+    <defName>Blocky_Signs_ItemFrame</defName>
+    <label>item frame</label>
+    <graphicData>
+      <texPath>Blocky/Signs/Frame</texPath>
+    </graphicData>
+  </ThingDef>
+
+  <ThingDef ParentName="Blocky_Signs_FrameBase">
+    <defName>Blocky_Signs_GlowItemFrame</defName>
+    <label>glow item frame</label>
+    <graphicData>
+      <texPath>Blocky/Signs/GlowFrame</texPath>
+    </graphicData>
+    <costList>
+      <Gold>5</Gold>
+    </costList>
+    <statBases>
+      <Beauty>6</Beauty>
+    </statBases>
+    <comps>
+      <li Class="CompProperties_Glower">
+        <glowRadius>2</glowRadius>
+        <glowColor>(214,148,94,0)</glowColor>
+      </li>
+    </comps>
+  </ThingDef>
+</Defs>
