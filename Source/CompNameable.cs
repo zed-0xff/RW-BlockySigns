@@ -168,7 +168,7 @@ public class CompNameable : ThingComp {
             if( ModConfig.Settings.useCustomLabelDraw ){
                 Color shade = shadeColor();
 
-                Utils.DrawThingLabelAtlas(GenMapUI.LabelDrawPosFor(parent, Props.labelShift), name, color,
+                Utils.DrawThingLabelAtlas(GenMapUI.LabelDrawPosFor(parent, Props.labelShift), name, (color-shade).ToOpaque(),
                         bgColor: (parent.DrawColor - shade).ToOpaque(),
                         atlasTex: texAtlas,
                         minWidth: 30f,
