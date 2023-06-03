@@ -16,6 +16,8 @@ public class CompNameable : ThingComp {
         set { name = value; }
     }
 
+    private static readonly Texture2D texAtlas = ContentFinder<Texture2D>.Get("Blocky/Signs/Sign_Atlas");
+
     public Color color = GenMapUI.DefaultThingLabelColor;
 
     static Color lastSelectedColor = ColorLibrary.Black;
@@ -31,16 +33,18 @@ public class CompNameable : ThingComp {
 
     public override IEnumerable<Gizmo> CompGetGizmosExtra() {
         yield return new Command_Action {
+            defaultLabel = "Rename".Translate(),
+            icon = TexButton.Rename,
+            hotKey = KeyBindingDefOf.Misc3,
             action = delegate{
                 Find.WindowStack.Add(new Dialog_Rename(this));
-            },
-            defaultLabel = "Rename".Translate(),
-            icon = TexButton.Rename
+            }
         };
         yield return new Command_ColorIcon {
             defaultLabel = "GlowerChangeColor".Translate(),
             icon = ContentFinder<Texture2D>.Get("UI/Commands/ChangeColor"),
             color = color,
+            hotKey = KeyBindingDefOf.Misc2,
             action = delegate
             {
                 Find.WindowStack.Add( new Blocky.Core.Dialog_ColorPicker(color, delegate(Color newColor)
@@ -98,7 +102,8 @@ public class CompNameable : ThingComp {
     const float defaultCapacity = 0.75f; // width capacity if non-custom sign
 
     bool canDrawCustomTex(){
-        return Find.CameraDriver.CurrentZoom <= CameraZoomRange.Close && ModConfig.Settings.fontSize <= 1;
+        //return Find.CameraDriver.CurrentZoom <= CameraZoomRange.Close && ModConfig.Settings.fontSize <= 1;
+        return true;
     }
 
     int prevStateHash;
@@ -114,30 +119,41 @@ public class CompNameable : ThingComp {
         return cachedTextSize.x / Find.CameraDriver.CellSizePixels;
     }
 
-    public override void PostDraw(){
-		base.PostDraw();
-        if( !ModConfig.Settings.useCustomLabelDraw ) return;
-        if (Find.CameraDriver.CellSizePixels < ModConfig.Settings.maxZoom ) return;
-        if (!canDrawCustomTex()) return; // no custom texture draw, just text on bg
+//    public override void PostDraw(){
+//		base.PostDraw();
+//        if( !ModConfig.Settings.useCustomLabelDraw ) return;
+//        if (Find.CameraDriver.CellSizePixels < ModConfig.Settings.maxZoom ) return;
+//        if (!canDrawCustomTex()) return; // no custom texture draw, just text on bg
+//
+//        float nCells = calcNCells();
+//
+//        // 0.05f to prevent flickering
+//        if( nCells < defaultCapacity - 0.05f ) return;
+//
+//        int nDraws = (int)Mathf.Ceil(nCells / texWidth);
+//
+//        float x = -nDraws * texWidth / 2 + texWidth/2;
+////        LeftGraphic.Draw(parent.DrawPos + new Vector3(x-texWidth, 1, 0), parent.Rotation, parent);
+////        for( int i=0; i<nDraws; i++ ){
+////            CenterGraphic.Draw(parent.DrawPos + new Vector3(x, 1, 0), parent.Rotation, parent);
+////            x += texWidth;
+////        }
+////        RightGraphic.Draw(parent.DrawPos + new Vector3(x, 1, 0), parent.Rotation, parent);
+//
+////        DrawStencilCell(
+////                parent.DrawPos + new Vector3(0, 1, 0),
+////                CenterGraphic.MatAt(parent.Rotation, parent),
+////                nCells + 0.05f);
+//    }
 
-        float nCells = calcNCells();
-
-        // 0.05f to prevent flickering
-        if( nCells < defaultCapacity - 0.05f ) return;
-
-        int nDraws = (int)Mathf.Ceil(nCells / texWidth);
-
-        float x = -nDraws * texWidth / 2 + texWidth/2;
-        LeftGraphic.Draw(parent.DrawPos + new Vector3(x-texWidth, 1, 0), parent.Rotation, parent);
-        for( int i=0; i<nDraws; i++ ){
-            CenterGraphic.Draw(parent.DrawPos + new Vector3(x, 1, 0), parent.Rotation, parent);
-            x += texWidth;
-        }
-        RightGraphic.Draw(parent.DrawPos + new Vector3(x, 1, 0), parent.Rotation, parent);
+    public static void DrawStencilCell(Vector3 c, Material material, float width = 1f, float height = 1f){
+        Matrix4x4 matrix = default(Matrix4x4);
+        matrix.SetTRS(c, Quaternion.identity, new Vector3(width, 1f, height));
+        Graphics.DrawMesh(MeshPool.plane10, matrix, material, 0);
     }
 
     public override string CompInspectStringExtra() {
-        return name;
+        return name + "\n" + parent.Map.glowGrid.GameGlowAt(parent.Position) + "\n" + MatBases.SunShadow.color;
     }
 
     public override void DrawGUIOverlay(){
@@ -145,13 +161,14 @@ public class CompNameable : ThingComp {
 
         if (Find.CameraDriver.CellSizePixels >= ModConfig.Settings.maxZoom ){
             if( ModConfig.Settings.useCustomLabelDraw ){
-                float labelShift = Props.labelShift;
-                Utils.DrawCustomThingLabel(GenMapUI.LabelDrawPosFor(parent, labelShift), name, color,
-                        debug: Find.Selector.SingleSelectedObject == parent,
-                        bgColor: canDrawCustomTex() ? null : parent.DrawColor * 0.8f,
+                var glow = parent.Map.glowGrid.VisualGlowAt(parent.Position);
+                Utils.DrawThingLabelAtlas(GenMapUI.LabelDrawPosFor(parent, Props.labelShift), name, color,
+                        bgColor: parent.DrawColor.ToOpaque(),
+                        atlasTex: texAtlas,
+                        minWidth: 30f,
                         font: (GameFont)ModConfig.Settings.fontSize );
             } else {
-                GenMapUI.DrawThingLabel(GenMapUI.LabelDrawPosFor(parent, Props.labelShift), name, color);
+                GenMapUI.DrawThingLabel(GenMapUI.LabelDrawPosFor(parent, Props.labelShift - 0.05f), name, color);
             }
         }
     }

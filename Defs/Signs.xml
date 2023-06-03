@@ -11,7 +11,7 @@
       <li>Stony</li>
     </stuffCategories>
     <costStuffCount>30</costStuffCount>
-    <drawerType>MapMeshAndRealTime</drawerType>
+    <!--drawerType>MapMeshAndRealTime</drawerType-->
     <drawGUIOverlay>true</drawGUIOverlay>
     <rotatable>false</rotatable>
   </ThingDef>
