@@ -146,14 +146,19 @@ public class CompNameable : ThingComp {
 ////                nCells + 0.05f);
 //    }
 
-    public static void DrawStencilCell(Vector3 c, Material material, float width = 1f, float height = 1f){
-        Matrix4x4 matrix = default(Matrix4x4);
-        matrix.SetTRS(c, Quaternion.identity, new Vector3(width, 1f, height));
-        Graphics.DrawMesh(MeshPool.plane10, matrix, material, 0);
-    }
+//    public static void DrawStencilCell(Vector3 c, Material material, float width = 1f, float height = 1f){
+//        Matrix4x4 matrix = default(Matrix4x4);
+//        matrix.SetTRS(c, Quaternion.identity, new Vector3(width, 1f, height));
+//        Graphics.DrawMesh(MeshPool.plane10, matrix, material, 0);
+//    }
 
-    public override string CompInspectStringExtra() {
-        return name + "\n" + parent.Map.glowGrid.GameGlowAt(parent.Position) + "\n" + MatBases.SunShadow.color;
+    Color shadeColor(){
+        if( ModConfig.Settings.respectLight ){
+            float glow = parent.Map.glowGrid.GameGlowAt(parent.Position);
+            return new Color(0.333f, 0.243f, 0.18f) * (1-glow);
+        } else {
+            return Color.clear;
+        }
     }
 
     public override void DrawGUIOverlay(){
@@ -161,9 +166,10 @@ public class CompNameable : ThingComp {
 
         if (Find.CameraDriver.CellSizePixels >= ModConfig.Settings.maxZoom ){
             if( ModConfig.Settings.useCustomLabelDraw ){
-                var glow = parent.Map.glowGrid.VisualGlowAt(parent.Position);
+                Color shade = shadeColor();
+
                 Utils.DrawThingLabelAtlas(GenMapUI.LabelDrawPosFor(parent, Props.labelShift), name, color,
-                        bgColor: parent.DrawColor.ToOpaque(),
+                        bgColor: (parent.DrawColor - shade).ToOpaque(),
                         atlasTex: texAtlas,
                         minWidth: 30f,
                         font: (GameFont)ModConfig.Settings.fontSize );

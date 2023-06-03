@@ -9,12 +9,14 @@ public class Settings : Verse.ModSettings {
     public int maxZoom;
     public bool useCustomLabelDraw = true;
     public int fontSize;
+    public bool respectLight = true;
 
     public override void ExposeData()
     {
         Scribe_Values.Look(ref maxZoom, "maxZoom", 30);
         Scribe_Values.Look(ref useCustomLabelDraw, "useCustomLabelDraw", true);
         Scribe_Values.Look(ref fontSize, "fontSize", 0);
+        Scribe_Values.Look(ref respectLight, "respectLight", true);
         base.ExposeData();
     }
 }
@@ -31,6 +33,7 @@ public class SettingsTab : Blocky.Core.SettingsTabBase {
 
         l.Label("Font size: " + ModConfig.Settings.fontSize);
         ModConfig.Settings.fontSize = (int)l.Slider(ModConfig.Settings.fontSize, 0, 2);
+        l.CheckboxLabeled("Respect light level", ref ModConfig.Settings.respectLight);
     }
 
     public override void Write(){
