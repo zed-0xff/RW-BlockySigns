@@ -30,7 +30,7 @@ public class Init
             .AllDefsListForReading
             .FindAll((ThingDef x) => 
                     x?.thingClass != null
-                    && (x.thingClass == typeof(Building_Frame))
+                    && typeof(Building_Frame).IsAssignableFrom(x.thingClass)
                     && ((BuildableDef)x).designationCategory != null
                     );
 

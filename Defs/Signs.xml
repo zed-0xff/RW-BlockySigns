@@ -18,6 +18,7 @@
   <ThingDef ParentName="Blocky_Signs_Base">
     <defName>Blocky_Signs_Sign</defName>
     <label>sign</label>
+    <description>Displays a custom text with a custom color</description>
     <graphicData>
       <texPath>Blocky/Signs/Sign</texPath>
       <shadowData>
@@ -35,6 +36,8 @@
   <ThingDef ParentName="Blocky_Signs_Base">
     <defName>Blocky_Signs_WallSign</defName>
     <label>wall sign</label>
+    <description>Displays a custom text with a custom color.
+Placeable on any surface or building.</description>
     <graphicData>
       <texPath>Blocky/Signs/WallSign</texPath>
     </graphicData>

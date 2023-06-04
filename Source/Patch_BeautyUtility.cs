@@ -3,6 +3,7 @@ using RimWorld;
 using System.Linq;
 using Verse;
 using Verse.AI;
+using Blocky.Core;
 
 namespace Blocky.Signs;
 
@@ -11,12 +12,8 @@ public class Patch__BeautyUtility__FrameBeauty
 {
     public static void Postfix(ref float __result, IntVec3 c, Map map)
     {
-        if( c == null || map == null ) return;
-
-        foreach( Thing container in map.thingGrid.ThingsListAt(c) ){
-            if( container is Building_Frame b ){
-                __result += b.InnerBeauty();
-            }
+        if( Cache<Building_Frame>.Get(c, map) is Building_Frame f ){
+            __result += f.InnerBeauty();
         }
     }
 }

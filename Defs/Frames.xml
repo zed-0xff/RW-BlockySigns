@@ -5,7 +5,7 @@
     <designationCategory>Blocky</designationCategory>
     <description>An elegant display frame. You expected to put some beautiful stuff in it.</description>
     <thingClass>Blocky.Signs.Building_Frame</thingClass>
-    <altitudeLayer>ItemImportant</altitudeLayer>
+    <altitudeLayer>BuildingOnTop</altitudeLayer>
     <passability>Standable</passability>
     <fillPercent>0.1</fillPercent>
     <castEdgeShadows>false</castEdgeShadows>
@@ -21,9 +21,10 @@
       <Beauty>5</Beauty>
       <Mass>2.5</Mass>
     </statBases>
+    <clearBuildingArea>false</clearBuildingArea>
     <building>
       <isEdifice>false</isEdifice>
-      <canPlaceOverWall>true</canPlaceOverWall>
+      <canPlaceOverWall>false</canPlaceOverWall>
       <preventDeteriorationOnTop>true</preventDeteriorationOnTop>
       <ignoreStoredThingsBeauty>true</ignoreStoredThingsBeauty>
       <maxItemsInCell>1</maxItemsInCell>
@@ -37,6 +38,7 @@
           <disallowedCategories>
             <li>Chunks</li>
             <li>Buildings</li>
+            <li>Plants</li>
           </disallowedCategories>
           <specialFiltersToDisallow>
             <li>AllowLargeCorpses</li>
@@ -69,11 +71,16 @@
     <size>(1,1)</size>
     <comps>
       <li Class="LWM.DeepStorage.Properties" MayRequire="LWM.DeepStorage">
+        <!-- in fact it's only needed to stop drawing a contained item -->
         <maxNumberStacks>1</maxNumberStacks>
         <showContents>false</showContents>
       </li>
     </comps>
     <drawerType>MapMeshAndRealTime</drawerType>
+    <placeWorkers>
+      <li>Blocky.Signs.PlaceWorker_Frame</li>
+    </placeWorkers>
+    <uiIconScale>0.75</uiIconScale>
   </ThingDef>
 
   <ThingDef ParentName="Blocky_Signs_FrameBase">
@@ -96,6 +103,45 @@
     <statBases>
       <Beauty>6</Beauty>
     </statBases>
+    <comps>
+      <li Class="CompProperties_Glower">
+        <glowRadius>2</glowRadius>
+        <glowColor>(214,148,94,0)</glowColor>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <!-- look awful w/o deep storage -->
+  <ThingDef Name="Blocky_Signs_SmallItemFrame" ParentName="Blocky_Signs_FrameBase" MayRequire="LWM.DeepStorage">
+    <defName>Blocky_Signs_SmallItemFrame</defName>
+    <label>small item frame</label>
+    <description>Smaller version of a frame. Ideal to be placed over a dresser or an end table.</description>
+    <thingClass>Blocky.Signs.Building_SmallFrame</thingClass>
+    <graphicData>
+      <texPath>Blocky/Signs/SmallFrame</texPath>
+    </graphicData>
+    <rotatable>true</rotatable>
+    <building>
+      <canPlaceOverWall>true</canPlaceOverWall>
+    </building>
+    <statBases>
+      <Beauty>4</Beauty>
+    </statBases>
+    <defaultPlacingRot>North</defaultPlacingRot>
+  </ThingDef>
+
+  <ThingDef ParentName="Blocky_Signs_SmallItemFrame" MayRequire="LWM.DeepStorage">
+    <defName>Blocky_Signs_SmallGlowItemFrame</defName>
+    <label>small glow item frame</label>
+    <graphicData>
+      <texPath>Blocky/Signs/SmallGlowFrame</texPath>
+    </graphicData>
+    <statBases>
+      <Beauty>5</Beauty>
+    </statBases>
+    <costList>
+      <Gold>5</Gold>
+    </costList>
     <comps>
       <li Class="CompProperties_Glower">
         <glowRadius>2</glowRadius>

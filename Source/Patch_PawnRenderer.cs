@@ -3,6 +3,7 @@ using RimWorld;
 using System.Linq;
 using Verse;
 using Verse.AI;
+using Blocky.Core;
 
 namespace Blocky.Signs;
 
@@ -17,12 +18,10 @@ class Patch__PawnRenderer__InFrameAngle
         if( !___pawn.Dead ) return;
 
         var corpse = ___pawn.Corpse;
-        if( corpse == null || corpse.Map == null || corpse.Position == null ) return;
+        if( corpse == null ) return;
 
-        foreach( Thing container in corpse.Map.thingGrid.ThingsListAt(corpse.Position) ){
-            if( container is Building_Frame f ){
-                __result = f.angle;
-            }
+        if( Cache<Building_Frame>.Get(corpse.Position, corpse.Map) is Building_Frame f ){
+            __result = f.angle;
         }
     }
 }

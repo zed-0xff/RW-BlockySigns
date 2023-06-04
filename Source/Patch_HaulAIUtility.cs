@@ -3,6 +3,7 @@ using RimWorld;
 using System.Linq;
 using Verse;
 using Verse.AI;
+using Blocky.Core;
 
 namespace Blocky.Signs;
 
@@ -13,13 +14,11 @@ public class Patch__HaulAIUtility__FrameAcceptSingleItem
     {
         if( __result == null ) return;
 
-        foreach( Thing container in p.Map.thingGrid.ThingsListAt(storeCell) ){
-            if( container is Building_Frame b ){
-                if( b.slotGroup.HeldThings.Any() ){
-                    __result = null;
-                } else {
-                    __result.count = 1;
-                }
+        if( Cache<Building_Frame>.Get(storeCell, p.Map) is Building_Frame f ){
+            if( f.slotGroup.HeldThings.Any() ){
+                __result = null;
+            } else {
+                __result.count = 1;
             }
         }
     }

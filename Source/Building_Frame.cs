@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Verse;
+using Blocky.Core;
 
 namespace Blocky.Signs;
 
@@ -15,6 +16,16 @@ public class Building_Frame : Building_Storage {
 
     public float angle = 0;
 
+    public override void SpawnSetup(Map map, bool respawningAfterLoad){
+        base.SpawnSetup(map, respawningAfterLoad);
+        Cache<Building_Frame>.Add(this, map);
+    }
+
+    public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish){
+        Cache<Building_Frame>.Remove(this);
+        base.DeSpawn(mode);
+    }
+
     public override void Draw() {
         base.Draw();
 
@@ -24,7 +35,7 @@ public class Building_Frame : Building_Storage {
         }
     }
 
-    void drawThing(Thing t){
+    protected virtual void drawThing(Thing t){
         if( angle < -360 )
             angle += 360;
 
@@ -57,7 +68,7 @@ public class Building_Frame : Building_Storage {
         }
         yield return new Command_Action() {
             action = delegate{ angle -= 45; },
-                   hotKey = KeyBindingDefOf.Designator_RotateLeft, // Q
+                   //hotKey = KeyBindingDefOf.Designator_RotateLeft, // Q - breaks "Build copy"
                    defaultLabel = "Rotate",
                    icon = RotateIcon
         };
@@ -75,5 +86,14 @@ public class Building_Frame : Building_Storage {
     public override void ExposeData() {
         base.ExposeData();
         Scribe_Values.Look(ref angle, "angle");
+
+        if( Scribe.mode == LoadSaveMode.LoadingVars ){
+            // need to fill frame cache early, before the loader checks that there's items in walls and tries to despawn them
+            int map_id = -1;
+            Scribe_Values.Look(ref map_id, "map");
+            if( map_id >= 0 ){
+                Cache<Building_Frame>.Add(this, map_id);
+            }
+        }
     }
 }
