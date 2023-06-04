@@ -28,6 +28,7 @@ https://ko-fi.com/K3K81Z3W5 or https://www.patreon.com/zed_0xff]]></description>
     </li>
   </modDependencies>
   <loadAfter>
+    <li>ludeon.rimworld.ideology</li>
     <li>Blocky.Core</li>
     <li>LWM.DeepStorage</li>
   </loadAfter>

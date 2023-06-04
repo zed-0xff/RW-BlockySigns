@@ -20,6 +20,7 @@
       <Flammability>1.0</Flammability>
       <Beauty>5</Beauty>
       <Mass>2.5</Mass>
+      <TerrorSource MayRequire="Ludeon.RimWorld.Ideology">0</TerrorSource>
     </statBases>
     <clearBuildingArea>false</clearBuildingArea>
     <building>

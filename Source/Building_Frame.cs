@@ -9,7 +9,7 @@ using Blocky.Core;
 namespace Blocky.Signs;
 
 [StaticConstructorOnStartup]
-public class Building_Frame : Building_Storage {
+public class Building_Frame : Building_Storage, IObservedThoughtGiver {
     static readonly Texture2D RotateIcon = ContentFinder<Texture2D>.Get("Blocky/UI/Rotate", true);
 
     const float itemWealthMultiplier = 0.25f; // jsut hardcode for now
@@ -33,6 +33,10 @@ public class Building_Frame : Building_Storage {
             drawThing(t);
             break;
         }
+    }
+
+    public bool Occupied {
+        get { return slotGroup.HeldThings.Any(); }
     }
 
     protected virtual void drawThing(Thing t){
@@ -74,11 +78,52 @@ public class Building_Frame : Building_Storage {
         };
     }
 
+    // <Ideology>
+    public bool HasCorpse(){
+        foreach (Thing thing in slotGroup.HeldThings) {
+            return thing is Corpse;
+        }
+        return false;
+    }
+
+    public bool HasSkull(){
+        foreach (Thing thing in slotGroup.HeldThings) {
+            return thing.def.defName == "Skull";
+        }
+        return false;
+    }
+
+    public Thought_Memory GiveObservedThought(Pawn observer) {
+        if( !ModsConfig.IdeologyActive ) return null;
+
+        if (observer.Ideo != null && observer.Ideo.IdeoApprovesOfSlavery()) {
+            return null;
+        }
+
+        if( HasSkull() ){
+            Thought_MemoryObservation obj = (Thought_MemoryObservation)ThoughtMaker.MakeThought(ThoughtDefOf.ObservedSkullspike);
+            obj.Target = this;
+            return obj;
+        }
+        return null;
+    }
+
+    public HistoryEventDef GiveObservedHistoryEvent(Pawn observer) {
+        return null;
+    }
+    // </Ideology>
+
     public override string GetInspectString() {
         string text = base.GetInspectString();
         text += "\n" + "Beauty".Translate() + ": " + this.GetStatValue(StatDefOf.Beauty);
-        if( slotGroup.HeldThings.Any() ){
+        if( Occupied ){
             text += " + " + InnerBeauty();
+            if( ModsConfig.IdeologyActive ){
+                float terror = this.GetStatValue(StatDefOf.TerrorSource);
+                if( terror != 0 ){
+                    text += "\n" + "Terror".Translate() + ": " + terror + "%";
+                }
+            }
         }
         return text;
     }

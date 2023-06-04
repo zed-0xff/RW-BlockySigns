@@ -1,0 +1,11 @@
+<Patch>
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/StatDef[defName="TerrorSource"]/parts/li[@Class="StatPart_Quality_Offset"]/thingDefs</xpath>
+    <value>
+      <li>Blocky_Signs_ItemFrame</li>
+      <li>Blocky_Signs_GlowItemFrame</li>
+      <li>Blocky_Signs_SmallItemFrame</li>
+      <li>Blocky_Signs_SmallGlowItemFrame</li>
+    </value>
+  </Operation>
+</Patch>
