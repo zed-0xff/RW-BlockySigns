@@ -11,9 +11,32 @@
 
 <color=#1a8bff><b>Sign</b></color>
 
+Stuffable signs that can display a custom text with a custom color.
+Sign width is automagically adjusted to accomodate contents.
+Font size & other options changeable in mod settings.
+
 <color=#1a8bff><b>Wall Sign</b></color>
 
+Same as regular one, but you can stick it to any surface.
+
 <color=#1a8bff><b>Frames</b></color>
+
+<color=#1a8bff><b>You can build a beautiful museum</b></color>
+
+(Things shown are from <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=1678192680">Fantastic Collectables</a> mod)
+Frames have their own beauty and quality that.
+Additional beauty from displayed item is calculated as maximum of its own beauty or monetary value x0.25.
+
+<color=#1a8bff><b>Or a scary room of fear:</b></color>
+
+If [b]Ideology[/b] is active you can put a skull or a small dead animal into a frame, and it will induce terror.
+Just like the vanilla skullspike, but better.
+
+<color=#1a8bff><b>Or just put them on top of your favorite pawn's dresser:</b></color>
+
+Small frames fit perfectly on top of dressers and bed tables.
+All frames act like a standard containers, but can hold just a single item.
+Use <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2497907804">Flickable Storage</a> if you want to lock items within frames.
 
 <color=#1a8bff><b>Verified compatible/supported mods</b></color>
   • <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=1617282896">LWM's Deep Storage</a>

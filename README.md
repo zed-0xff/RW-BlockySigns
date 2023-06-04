@@ -4,16 +4,37 @@
 ## Sign
 
 ![](screens/signs.jpg)
+Stuffable signs that can display a custom text with a custom color.
+Sign width is automagically adjusted to accomodate contents.
+Font size & other options changeable in mod settings.
 
 ## Wall Sign
 
 ![](screens/dispenser.jpg)
+Same as regular one, but you can stick it to any surface.
 
 ## Frames
 
+### You can build a beautiful museum
+
 ![](screens/museum.jpg)
+(Things shown are from [Fantastic Collectables](https://steamcommunity.com/sharedfiles/filedetails/?id=1678192680) mod)
+
+Frames have their own beauty and quality that.
+Additional beauty from displayed item is calculated as maximum of its own beauty or monetary value x0.25.
+
+### Or a scary room of fear:
+
 ![](screens/horror_room.jpg)
+If [b]Ideology[/b] is active you can put a skull or a small dead animal into a frame, and it will induce terror.
+Just like the vanilla skullspike, but better.
+
+### Or just put them on top of your favorite pawn's dresser:
+
 ![](screens/dresser.jpg)
+Small frames fit perfectly on top of dressers and bed tables.
+All frames act like a standard containers, but can hold just a single item.
+Use [Flickable Storage](https://steamcommunity.com/sharedfiles/filedetails/?id=2497907804) if you want to lock items within frames.
 
 ### Verified compatible/supported mods
 
