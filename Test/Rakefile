@@ -1,0 +1,19 @@
+task default: :test
+
+def try_run fname, prefix:''
+  if File.exist?(fname)
+    system(prefix+fname, exception: true)
+  end
+end
+
+desc "test"
+task :test do
+  system "dotnet build . --debug --nologo -v q", exception: true
+  try_run "./bin/Debug/Test"
+  try_run "./bin/Debug/Test.exe", prefix: "mono --debug "
+end
+
+desc "clean"
+task :clean do
+  system "rm -rf bin obj", exception: true
+end

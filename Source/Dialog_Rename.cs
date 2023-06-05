@@ -5,7 +5,7 @@ namespace Blocky.Signs;
 public class Dialog_Rename : Verse.Dialog_Rename {
     private CompNameable nameable;
 
-    protected override int MaxNameLength => 128;
+    protected override int MaxNameLength => 256;
 
     public Dialog_Rename(CompNameable nameable) {
         this.nameable = nameable;

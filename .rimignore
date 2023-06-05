@@ -3,6 +3,7 @@
 screens
 *.xcf
 TODO
+Test
 
 .DS_Store
 .git
