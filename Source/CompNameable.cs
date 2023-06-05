@@ -2,6 +2,7 @@ using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using Verse;
 
@@ -13,7 +14,7 @@ public class CompNameable : ThingComp {
 
     public string Name {
         get { return name; }
-        set { name = value; }
+        set { name = value; cachedText = null; }
     }
 
     private static readonly Texture2D texAtlas = ContentFinder<Texture2D>.Get("Blocky/Signs/Sign_Atlas");
@@ -65,22 +66,57 @@ public class CompNameable : ThingComp {
         }
     }
 
+    static Dictionary<string, Utils.DynInvoker> invokerCache = new Dictionary<string, Utils.DynInvoker>();
+
+    string parseExpressions(string text){
+        return Regex.Replace(text, @"\$\{([a-zA-Z0-9_.:()]+)\}", delegate(Match match) {
+                string fqmn = match.Groups[1].Captures[0].Value;
+                Utils.DynInvoker invoker = null;
+                if( !invokerCache.TryGetValue(fqmn, out invoker) ){
+                    invoker = invokerCache[fqmn] = Utils.FastCallAny(fqmn, this);
+                }
+                return invoker.Invoke(this).ToString();
+        });
+    }
+
+    string cachedText = null;
+    bool wasError = false;
+
     public override void DrawGUIOverlay(){
         if( name == "" || name == null ) return;
 
-        if (Find.CameraDriver.CellSizePixels >= ModConfig.Settings.maxZoom ){
+        string text = name;
+        if( ModConfig.Settings.parseExpressions && text.Contains("$") ){
+            if( cachedText == null || parent.IsHashIntervalTick(wasError ? 1000 : ModConfig.Settings.expInterval) ){
+                wasError = false;
+                try {
+                    cachedText = parseExpressions(text);
+                } catch( Exception ex ){
+                    wasError = true;
+                    Log.Error(text + ": " + ex);
+                    cachedText = ex.Message.Colorize(Color.red);
+                }
+            }
+            text = cachedText;
+        }
+
+        if( Find.CameraDriver.CellSizePixels >= ModConfig.Settings.maxZoom ){
             if( ModConfig.Settings.useCustomLabelDraw ){
                 Color shade = shadeColor();
 
-                Utils.DrawThingLabelAtlas(GenMapUI.LabelDrawPosFor(parent, Props.labelShift), name, (color-shade).ToOpaque(),
+                Utils.DrawThingLabelAtlas(GenMapUI.LabelDrawPosFor(parent, Props.labelShift), text, (color-shade).ToOpaque(),
                         bgColor: (parent.DrawColor - shade).ToOpaque(),
                         atlasTex: texAtlas,
                         minWidth: 30f,
                         font: (GameFont)ModConfig.Settings.fontSize );
             } else {
-                GenMapUI.DrawThingLabel(GenMapUI.LabelDrawPosFor(parent, Props.labelShift - 0.05f), name, color);
+                GenMapUI.DrawThingLabel(GenMapUI.LabelDrawPosFor(parent, Props.labelShift - 0.05f), text, color);
             }
         }
+    }
+
+    public override string CompInspectStringExtra() {
+        return name;
     }
 
     public override void PostExposeData() {

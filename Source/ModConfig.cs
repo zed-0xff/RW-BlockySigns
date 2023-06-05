@@ -12,6 +12,9 @@ public class Settings : Verse.ModSettings {
     public bool respectLight = true;
     public bool fixFramesCategory = true;
 
+    public bool parseExpressions = false;
+    public int expInterval;
+
     public override void ExposeData()
     {
         Scribe_Values.Look(ref maxZoom, "maxZoom", 30);
@@ -19,12 +22,16 @@ public class Settings : Verse.ModSettings {
         Scribe_Values.Look(ref fontSize, "fontSize", 0);
         Scribe_Values.Look(ref respectLight, "respectLight", true);
         Scribe_Values.Look(ref fixFramesCategory, "fixFramesCategory", true);
+        Scribe_Values.Look(ref parseExpressions, "parseExpressions", false);
+        Scribe_Values.Look(ref expInterval, "expInterval", 100);
         base.ExposeData();
     }
 }
 
 public class SettingsTab : Blocky.Core.SettingsTabBase {
     public override string Title => "Signs";
+
+    string tmpBuf;
 
     public override void Draw(Listing_Standard l){
         l.Label("Max zoom level: " + ModConfig.Settings.maxZoom);
@@ -44,6 +51,10 @@ public class SettingsTab : Blocky.Core.SettingsTabBase {
         if( b0 != ModConfig.Settings.fixFramesCategory && ModConfig.Settings.fixFramesCategory ){
             Init.fixFramesCategory();
         }
+
+        l.Gap();
+        l.CheckboxLabeled("Parse ${} expressions in labels", ref ModConfig.Settings.parseExpressions);
+        l.TextFieldNumericLabeled("Ticks between calls", ref ModConfig.Settings.expInterval, ref tmpBuf);
     }
 
     public override void Write(){
