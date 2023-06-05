@@ -214,7 +214,14 @@ static class ExpCompiler {
                     // skip last real call, only emit as opcode
                     break;
                 }
-                obj = mi.Invoke(obj, invoker == null ? null : new[]{ invoker.Invoke(root) } );
+
+                if( invoker == null ){
+                    obj = mi.Invoke(obj, null);
+                } else if( !mi.IsDefined(typeof(ExtensionAttribute) )){
+                    obj = mi.Invoke(obj, new[]{ invoker.Invoke(root) } );
+                } else {
+                    obj = mi.Invoke(obj, new[]{ obj, invoker.Invoke(root) } );
+                }
             } else {
                 throw new ArgumentException("unexpected token: " + token);
             }
