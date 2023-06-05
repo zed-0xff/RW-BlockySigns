@@ -23,7 +23,7 @@ public class Settings : Verse.ModSettings {
         Scribe_Values.Look(ref respectLight, "respectLight", true);
         Scribe_Values.Look(ref fixFramesCategory, "fixFramesCategory", true);
         Scribe_Values.Look(ref parseExpressions, "parseExpressions", false);
-        Scribe_Values.Look(ref expInterval, "expInterval", 100);
+        Scribe_Values.Look(ref expInterval, "expInterval", 1);
         base.ExposeData();
     }
 }
@@ -54,7 +54,7 @@ public class SettingsTab : Blocky.Core.SettingsTabBase {
 
         l.Gap();
         l.CheckboxLabeled("Parse ${} expressions in labels", ref ModConfig.Settings.parseExpressions);
-        l.TextFieldNumericLabeled("Ticks between calls", ref ModConfig.Settings.expInterval, ref tmpBuf);
+        l.TextFieldNumericLabeled("Ticks between calls", ref ModConfig.Settings.expInterval, ref tmpBuf, min: 1);
     }
 
     public override void Write(){
