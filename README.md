@@ -8,10 +8,23 @@ Stuffable signs that can display a custom text with a custom color.
 Sign width is automagically adjusted to accomodate contents.
 Font size & other options changeable in mod settings.
 
+### killer feature
+
+![](screens/off.jpg) ![](screens/on.jpg)
+
+Signs can render C# code expressions! The possibilities are endless!
+By default it's turned off in mod's settings.
+Performance is cool - under the hood it gets compiled into CIL and runs superfast.
+Offscreen / zoomed out signs code does not gets executed.
+I recommend you to try **${GenText.RandomSeedString}** - looks very cool :)
+
 ## Wall Sign
 
 ![](screens/dispenser.jpg)
 Same as regular one, but you can stick it to any surface.
+Label text:
+
+    CanDispenseNow: ${parent.Position.GetEdifice(Find.CurrentMap).CanDispenseNow}
 
 ## Frames
 
@@ -22,6 +35,13 @@ Same as regular one, but you can stick it to any surface.
 
 Frames have their own beauty and quality that.
 Additional beauty from displayed item is calculated as maximum of its own beauty or monetary value x0.25.
+Labels:
+
+    ${parent.Position.GetRoom(Find.CurrentMap).GetRoomRoleLabel()}
+
+    Temp: ${Mathf.RoundToInt(parent.Position.GetRoom(Find.CurrentMap).Temperature)}
+
+    Wealth: ${Mathf.RoundToInt(parent.Position.GetRoom(Find.CurrentMap).GetStat(RoomStatDefOf.Wealth))}
 
 ### Or a scary room of fear:
 
