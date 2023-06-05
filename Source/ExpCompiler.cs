@@ -108,12 +108,24 @@ static class ExpCompiler {
     }
 
     static DynInvoker FastCallTokenized( TokenList tokens, object root){
+        DynamicMethod dynMethod = new DynamicMethod("", typeof(object), new Type[]{typeof(object)}, restrictedSkipVisibility: true);
+        ILGenerator il = dynMethod.GetILGenerator(256);
+
+        Type lastValueType = FastCallTokenizedInt( tokens, root, il );
+
+        if (lastValueType.IsValueType){
+            il.Emit(OpCodes.Box, lastValueType); // convert int/float/... into an object
+        }
+
+        il.Emit(OpCodes.Ret);
+
+        return (DynInvoker)dynMethod.CreateDelegate(typeof(DynInvoker));
+    }
+
+    static Type FastCallTokenizedInt( TokenList tokens, object root, ILGenerator il ){
         if( tokens.Count() < 1 ){
             throw new ArgumentException("don't know how to parse " + tokens.Count() + " arg(s)");
         }
-
-        DynamicMethod dynMethod = new DynamicMethod("", typeof(object), new Type[]{typeof(object)}, restrictedSkipVisibility: true);
-        ILGenerator il = dynMethod.GetILGenerator(256);
 
         Type lastValueType;
         object obj;
@@ -167,18 +179,16 @@ static class ExpCompiler {
                 if( !mi.IsStatic && (obj == null || obj is Type) )
                     throw new ArgumentException("non-static method " + mi + " on no object");
 
-                // this.parent.Position.GetEdifice(Find.CurrentMap)
-                //                      ^^^^^^^^^^ extension method
-                if( mi.IsDefined(typeof(ExtensionAttribute)) ){
-                    //il.Emit(OpCodes.Ldarg_0);
-                }
-
                 DynInvoker invoker = null;
                 if( ct.args.Any() ){
                     invoker = Compile( ct.args[0].Original, root ); // XXX only a single arg now
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Call, invoker.GetInvocationList()[0].Method); // Call or Callvirt ?
-                    Type ptype = mi.GetParameters()[0].ParameterType;
+
+                    // this.parent.Position.GetEdifice(Find.CurrentMap)
+                    //                      ^^^^^^^^^^ extension method
+                    int pidx = mi.IsDefined(typeof(ExtensionAttribute)) ? 1 : 0;
+                    Type ptype = mi.GetParameters()[pidx].ParameterType;
                     if( ptype.IsValueType ){
                         il.Emit(OpCodes.Unbox_Any, ptype);
                     }
@@ -197,14 +207,7 @@ static class ExpCompiler {
                 throw new ArgumentException("unexpected token: " + token);
             }
         }
-
-        if (lastValueType.IsValueType){
-            il.Emit(OpCodes.Box, lastValueType); // convert int/float/... into an object
-        }
-
-        il.Emit(OpCodes.Ret);
-
-        return (DynInvoker)dynMethod.CreateDelegate(typeof(DynInvoker));
+        return lastValueType;
     }
 
     public static MethodInfo getMethodInfo(Type t, CallToken ct){
