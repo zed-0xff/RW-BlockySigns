@@ -46,5 +46,10 @@ class Test_ExpCompiler {
 
         Expect.Eq(_Room.instance, ExpCompiler.Compile("_Gizmo_RoomStats.GetRoomToShowStatsFor(this.parent)", _Comp.instance).Invoke(_Comp.instance));
         Expect.Eq(42, ExpCompiler.Compile("_Gizmo_RoomStats.GetRoomToShowStatsFor(this.parent).Temperature", _Comp.instance).Invoke(_Comp.instance));
+
+        // float, parenthesis
+        Expect.Eq(1, ExpCompiler.Compile("Mathf.RoundToInt(this.mf())", _Comp.instance).Invoke(_Comp.instance));
+        Expect.Eq(5, ExpCompiler.Compile("Mathf.RoundToInt(this.ff)", _Comp.instance).Invoke(_Comp.instance));
+        Expect.Eq(4, ExpCompiler.Compile("Mathf.RoundToInt(Mathf.Floor(this.ff))", _Comp.instance).Invoke(_Comp.instance));
     }
 }

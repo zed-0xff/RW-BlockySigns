@@ -28,6 +28,10 @@ public class _Gizmo_RoomStats {
 public class _Comp {
     public static _Comp instance = new _Comp();
 
+    float mf(){
+        return 1.23f;
+    }
+
     int mi(){
         return 111;
     }
@@ -41,6 +45,7 @@ public class _Comp {
     }
 
     int fi = 333;
+    float ff = 4.56f;
     static int sfi = 444;
 
     public _Building parent { get { return _Building.instance; } }

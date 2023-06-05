@@ -76,23 +76,30 @@ static class ExpCompiler {
                     start = i+1;
                     break;
                 case '(':
+                    int depth = 0;
                     for( int j=i+1; j<fqmn.Length; j++ ){
+                        if( fqmn[j] == '(' )
+                            depth++;
                         if( fqmn[j] == ')' ){
-                            var args = fqmn.Substring(i+1, j-i-1)
-                                .Split(',')
-                                .Select(x => x.Trim())
-                                .Where(x  => !string.IsNullOrEmpty(x))
-                                .Select(x => Tokenize(x))
-                                .ToArray();
-                            tokens.Add(new CallToken(fqmn.Substring(start, i-start), args));
-                            i = j;
-                            start = i+1;
-                            break;
+                            if( depth > 0 ){
+                                depth--;
+                            } else {
+                                var args = fqmn.Substring(i+1, j-i-1)
+                                    .Split(',')
+                                    .Select(x => x.Trim())
+                                    .Where(x  => !string.IsNullOrEmpty(x))
+                                    .Select(x => Tokenize(x))
+                                    .ToArray();
+                                tokens.Add(new CallToken(fqmn.Substring(start, i-start), args));
+                                i = j;
+                                start = i+1;
+                                break;
+                            }
                         }
                     }
                     break;
                 case ')':
-                    throw new ArgumentException("nested brackets unimplemented yet");
+                    throw new ArgumentException("unexpected ')'");
             }
         }
 
@@ -110,6 +117,11 @@ static class ExpCompiler {
     static DynInvoker FastCallTokenized( TokenList tokens, object root){
         DynamicMethod dynMethod = new DynamicMethod("", typeof(object), new Type[]{typeof(object)}, restrictedSkipVisibility: true);
         ILGenerator il = dynMethod.GetILGenerator(256);
+
+        // syntax sugar
+        if( (tokens[0] as SimpleToken)?.content == "parent" ){
+            tokens.Insert(0, new SimpleToken("this"));
+        }
 
         Type lastValueType = FastCallTokenizedInt( tokens, root, il );
 
