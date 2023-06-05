@@ -11,6 +11,16 @@ namespace Blocky.Signs;
 static class ExpCompiler {
     public delegate object DynInvoker(object root);
 
+    static Dictionary<string, DynInvoker> invokerCache = new Dictionary<string, DynInvoker>();
+
+    public static DynInvoker Compile(string exp, object root){
+        DynInvoker invoker = null;
+        if( !invokerCache.TryGetValue(exp, out invoker) ){
+            invoker = invokerCache[exp] = FastCallAny(exp, root);
+        }
+        return invoker;
+    }
+
     // this         this
     // this         this.parent
     // this         this.parent.DrawColor
@@ -21,7 +31,7 @@ static class ExpCompiler {
     // field chain: Find.CameraDriver.CurrentZoom
 
     // fast, because expression is compiled into bytecode
-    public static DynInvoker FastCallAny( string fqmn, object root, bool debug = false ){
+    static DynInvoker FastCallAny( string fqmn, object root, bool debug = false ){
         var a = fqmn.Split(new char[] { '.', ':' }, StringSplitOptions.RemoveEmptyEntries).ToList();
         if( a.Count() < 1 ){
             throw new ArgumentException("don't know how to parse " + a.Count() + " arg(s)");

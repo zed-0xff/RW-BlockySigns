@@ -66,16 +66,10 @@ public class CompNameable : ThingComp {
         }
     }
 
-    static Dictionary<string, ExpCompiler.DynInvoker> invokerCache = new Dictionary<string, ExpCompiler.DynInvoker>();
-
     string parseExpressions(string text){
         return Regex.Replace(text, @"\$\{([a-zA-Z0-9_.:()]+)\}", delegate(Match match) {
                 string fqmn = match.Groups[1].Captures[0].Value;
-                ExpCompiler.DynInvoker invoker = null;
-                if( !invokerCache.TryGetValue(fqmn, out invoker) ){
-                    invoker = invokerCache[fqmn] = ExpCompiler.FastCallAny(fqmn, this);
-                }
-                return invoker.Invoke(this).ToString();
+                return ExpCompiler.Compile(fqmn, this).Invoke(this).ToString();
         });
     }
 
