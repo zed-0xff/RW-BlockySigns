@@ -9,7 +9,8 @@ using Verse;
 namespace Blocky.Signs;
 
 [StaticConstructorOnStartup]
-public class CompNameable : ThingComp {
+public partial class CompNameable : ThingComp {
+    public Color color = GenMapUI.DefaultThingLabelColor;
     private string name;
 
     public string Name {
@@ -19,16 +20,15 @@ public class CompNameable : ThingComp {
 
     private static readonly Texture2D texAtlas = ContentFinder<Texture2D>.Get("Blocky/Signs/Sign_Atlas");
 
-    public Color color = GenMapUI.DefaultThingLabelColor;
-
     static Color lastSelectedColor = ColorLibrary.Black;
 
 	CompProperties_Nameable Props => (CompProperties_Nameable)props;
 
     public override void PostSpawnSetup(bool respawningAfterLoad) {
+        base.PostSpawnSetup(respawningAfterLoad);
+        cachedText = null;
         if( !respawningAfterLoad ){
-            name = parent.thingIDNumber.ToString();
-            color = lastSelectedColor;
+            SignCopier.PostSpawnSetup(this);
         }
     }
 

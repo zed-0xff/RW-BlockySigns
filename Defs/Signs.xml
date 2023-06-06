@@ -2,6 +2,10 @@
 <Defs>
   <ThingDef Name="Blocky_Signs_Base" ParentName="BuildingBase" Abstract="True">
     <designationCategory>Blocky</designationCategory>
+    <thingClass>Blocky.Signs.Building_Sign</thingClass>
+    <building>
+      <blueprintClass>Blocky.Signs.Blueprint_Sign</blueprintClass>
+    </building>
     <graphicData>
       <graphicClass>Graphic_Single</graphicClass>
     </graphicData>
@@ -13,6 +17,14 @@
     <costStuffCount>30</costStuffCount>
     <drawGUIOverlay>true</drawGUIOverlay>
     <rotatable>false</rotatable>
+    <statBases>
+      <WorkToBuild>800</WorkToBuild>
+      <Mass>2.5</Mass>
+    </statBases>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <thingCategories>
+      <li>BuildingsBlocky</li>
+    </thingCategories>
   </ThingDef>
 
   <ThingDef ParentName="Blocky_Signs_Base">
