@@ -53,8 +53,10 @@ Just like the vanilla skullspike, but better.
 
 ![](screens/dresser.jpg)
 Small frames fit perfectly on top of dressers and bed tables.
+
 All frames act like a standard containers, but can hold just a single item.
 Use [Flickable Storage](https://steamcommunity.com/sharedfiles/filedetails/?id=2497907804) if you want to lock items within frames.
+Contained items can be rotated in 45° increments, as the original minecraft ones.
 
 ### Verified compatible/supported mods
 
