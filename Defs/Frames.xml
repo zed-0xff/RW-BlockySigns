@@ -17,6 +17,7 @@
     </stuffCategories>
     <defaultPlacingRot>South</defaultPlacingRot>
     <statBases>
+      <WorkToBuild>1200</WorkToBuild>
       <Flammability>1.0</Flammability>
       <Beauty>5</Beauty>
       <Mass>2.5</Mass>
@@ -82,6 +83,9 @@
       <li>Blocky.Signs.PlaceWorker_Frame</li>
     </placeWorkers>
     <uiIconScale>0.75</uiIconScale>
+    <thingCategories Inherit="False">
+      <li>BuildingsBlocky</li>
+    </thingCategories>
   </ThingDef>
 
   <ThingDef ParentName="Blocky_Signs_FrameBase">
@@ -90,6 +94,7 @@
     <graphicData>
       <texPath>Blocky/Signs/Frame</texPath>
     </graphicData>
+    <uiIconPath>Blocky/Signs/Frame</uiIconPath> <!-- absence of this tag breaks stockpile filter icon -->
   </ThingDef>
 
   <ThingDef ParentName="Blocky_Signs_FrameBase">
@@ -98,6 +103,7 @@
     <graphicData>
       <texPath>Blocky/Signs/GlowFrame</texPath>
     </graphicData>
+    <uiIconPath>Blocky/Signs/GlowFrame</uiIconPath> <!-- absence of this tag breaks stockpile filter icon -->
     <costList>
       <Gold>5</Gold>
     </costList>
