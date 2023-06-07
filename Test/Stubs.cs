@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 #pragma warning disable CS0414
 
 public class _IntVec3 {
@@ -5,6 +7,18 @@ public class _IntVec3 {
 
 public class _Map {
     public static _Map instance = new _Map();
+
+    private List<_Thing> loadedFullThings;
+    public List<_Thing> LoadedFullThings { get { return loadedFullThings; }}
+
+    public _Map(){
+        loadedFullThings = new List<_Thing>();
+        loadedFullThings.Add(_Thing.instance);
+    }
+}
+
+public class _Thing {
+    public static _Thing instance = new _Thing();
 }
 
 public class _Building {
@@ -23,6 +37,10 @@ public class _Gizmo_RoomStats {
      public static _Room GetRoomToShowStatsFor(_Building building){
          return _Room.instance;
      }
+}
+
+public static class _Find {
+    public static _Map CurrentMap { get { return _Map.instance; }}
 }
 
 public class _Comp {

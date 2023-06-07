@@ -4,6 +4,17 @@ using System.Reflection;
 using Blocky.Signs;
 
 class Test_ExpCompiler {
+
+    static List<string> list;
+
+    public static string stub(int i){
+        return list[i];
+    }
+
+    public static char stub2(string s, int i){
+        return s[i];
+    }
+
     public static void Run(){
         Console.WriteLine("[.] Running Test_ExpCompiler");
 
@@ -51,8 +62,20 @@ class Test_ExpCompiler {
         Expect.Eq(42, ExpCompiler.Compile("parent.Position.GetRoom(Find.CurrentMap).Temperature", _Comp.instance).Invoke(_Comp.instance));
 
         // float, parenthesis
+
         Expect.Eq(1, ExpCompiler.Compile("Mathf.RoundToInt(this.mf())", _Comp.instance).Invoke(_Comp.instance));
         Expect.Eq(5, ExpCompiler.Compile("Mathf.RoundToInt(this.ff)", _Comp.instance).Invoke(_Comp.instance));
         Expect.Eq(4, ExpCompiler.Compile("Mathf.RoundToInt(Mathf.Floor(this.ff))", _Comp.instance).Invoke(_Comp.instance));
+
+        // imm
+
+        tokens = ExpCompiler.Tokenize("0");
+        Expect.Eq("{0}", tokens.ToString());
+
+        tokens = ExpCompiler.Tokenize("foo(0)");
+        Expect.Eq("[foo({0})]", tokens.ToString());
+
+        Expect.Eq(Math.Abs(4), ExpCompiler.Compile("Math.Abs(4)", _Comp.instance).Invoke(_Comp.instance));
+        Expect.Eq(Math.Abs(-4), ExpCompiler.Compile("Math.Abs(-4)", _Comp.instance).Invoke(_Comp.instance));
     }
 }

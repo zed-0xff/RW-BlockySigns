@@ -22,16 +22,29 @@ static class ExpCompiler {
         return invoker;
     }
 
-    public abstract class Token {
-        public abstract string Original{ get; }
-    }
-
     public class TokenList : List<Token> {
         public override string ToString(){
             return string.Join(".", this);
         }
 
         public string Original { get { return string.Join(".", this.Select((x) => x.Original)); }}
+    }
+
+    public abstract class Token {
+        public abstract string Original{ get; }
+    }
+
+    public class ImmToken : Token {
+        public int value;
+
+        public ImmToken(int x) {
+            value = x;
+        }
+
+        public override string Original => value.ToString();
+        public override string ToString(){
+            return "{" + value + "}";
+        }
     }
 
     public class SimpleToken : Token {
@@ -51,6 +64,7 @@ static class ExpCompiler {
     public class CallToken : Token {
         public string method;
         public TokenList[] args;
+        public Type[] argTypes = null;
 
         public override string Original { get { return method + "(" + string.Join(",", args.Select((x) => x.Original)) + ")"; } }
 
@@ -71,16 +85,18 @@ static class ExpCompiler {
             switch(fqmn[i]){
                 case '.':
                     if( i != start ){
-                        tokens.Add(new SimpleToken(fqmn.Substring(start, i-start)));
+                        addToken(fqmn.Substring(start, i-start));
                     }
                     start = i+1;
                     break;
                 case '(':
+                case '[':
+                    char closing = fqmn[i] == '(' ? ')' : ']';
                     int depth = 0;
                     for( int j=i+1; j<fqmn.Length; j++ ){
-                        if( fqmn[j] == '(' )
+                        if( fqmn[j] == fqmn[i] ) // '('
                             depth++;
-                        if( fqmn[j] == ')' ){
+                        if( fqmn[j] == closing ){ // ')'
                             if( depth > 0 ){
                                 depth--;
                             } else {
@@ -90,7 +106,13 @@ static class ExpCompiler {
                                     .Where(x  => !string.IsNullOrEmpty(x))
                                     .Select(x => Tokenize(x))
                                     .ToArray();
-                                tokens.Add(new CallToken(fqmn.Substring(start, i-start), args));
+                                if( closing == ')' ){
+                                    tokens.Add(new CallToken(fqmn.Substring(start, i-start), args));
+                                } else {
+                                    if( i != start )
+                                        tokens.Add(new SimpleToken(fqmn.Substring(start, i-start)));
+                                    tokens.Add(new CallToken("get_Item", args));
+                                }
                                 i = j;
                                 start = i+1;
                                 break;
@@ -99,12 +121,21 @@ static class ExpCompiler {
                     }
                     break;
                 case ')':
-                    throw new ArgumentException("unexpected ')'");
+                case ']':
+                    throw new ArgumentException("unexpected '"+fqmn[i]+"'");
             }
         }
 
         if( start < fqmn.Length ){
-            tokens.Add(new SimpleToken(fqmn.Substring(start)));
+            addToken(fqmn.Substring(start));
+        }
+
+        void addToken(string value){
+            if( Int32.TryParse(value, out int immValue) ){
+                tokens.Add(new ImmToken(immValue));
+            } else {
+                tokens.Add(new SimpleToken(value));
+            }
         }
 
         return tokens;
@@ -147,6 +178,9 @@ static class ExpCompiler {
             obj = root;
             lastValueType = root.GetType();
             il.Emit(OpCodes.Ldarg_0);
+        } else if( tokens[0] is ImmToken imm) {
+            obj = imm.value;
+            lastValueType = obj.GetType();
         } else {
             List<string> typeParts = new List<string>();
             Type t = null;
@@ -165,6 +199,11 @@ static class ExpCompiler {
         while( tokens.Any() ){
             Token token = tokens[0];
             tokens.RemoveAt(0);
+
+            if( token is ImmToken it ){
+                il.Emit(OpCodes.Ldc_I4, it.value);
+                continue;
+            }
 
             if( token is SimpleToken st ){
                 // field
@@ -185,17 +224,25 @@ static class ExpCompiler {
             }
 
             if( token is CallToken ct ){
-                MethodInfo mi = getMethodInfo((obj is Type) ? (Type)obj : obj.GetType(), ct);
-                if( mi == null )
-                    throw new ArgumentException("no method " + ct.Original + " on " + (obj == null ? "Null" : obj.GetType()));
-                if( !mi.IsStatic && (obj == null || obj is Type) )
-                    throw new ArgumentException("non-static method " + mi + " on no object");
+                MethodInfo mi = null;
+                object subValue = null;
 
                 DynInvoker invoker = null;
                 if( ct.args.Any() ){
                     invoker = Compile( ct.args[0].Original, root ); // XXX only a single arg now
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Call, invoker.GetInvocationList()[0].Method); // Call or Callvirt ?
+
+                    subValue = invoker.Invoke(root);
+                    if( subValue != null ){
+                        ct.argTypes = new Type[]{ subValue.GetType() }; // XXX may be a subtype
+                    }
+
+                    mi = getMethodInfo((obj is Type) ? (Type)obj : obj.GetType(), ct);
+                    if( mi == null )
+                        throw new ArgumentException("no method " + ct.Original + " on " + (obj == null ? "Null" : obj.GetType()));
+                    if( !mi.IsStatic && (obj == null || obj is Type) )
+                        throw new ArgumentException("non-static method " + mi + " on no object");
 
                     // this.parent.Position.GetEdifice(Find.CurrentMap)
                     //                      ^^^^^^^^^^ extension method
@@ -204,7 +251,14 @@ static class ExpCompiler {
                     if( ptype.IsValueType ){
                         il.Emit(OpCodes.Unbox_Any, ptype);
                     }
+                } else {
+                    mi = getMethodInfo((obj is Type) ? (Type)obj : obj.GetType(), ct);
                 }
+
+                if( mi == null )
+                    throw new ArgumentException("no method " + ct.Original + " on " + (obj == null ? "Null" : obj.GetType()));
+                if( !mi.IsStatic && (obj == null || obj is Type) )
+                    throw new ArgumentException("non-static method " + mi + " on no object");
 
                 il.Emit(mi.IsStatic ? OpCodes.Call : OpCodes.Callvirt, mi);
 
@@ -218,9 +272,9 @@ static class ExpCompiler {
                 if( invoker == null ){
                     obj = mi.Invoke(obj, null);
                 } else if( !mi.IsDefined(typeof(ExtensionAttribute) )){
-                    obj = mi.Invoke(obj, new[]{ invoker.Invoke(root) } );
+                    obj = mi.Invoke(obj, new[]{ subValue } );
                 } else {
-                    obj = mi.Invoke(obj, new[]{ obj, invoker.Invoke(root) } );
+                    obj = mi.Invoke(obj, new[]{ obj, subValue } );
                 }
             } else {
                 throw new ArgumentException("unexpected token: " + token);
@@ -230,7 +284,17 @@ static class ExpCompiler {
     }
 
     public static MethodInfo getMethodInfo(Type t, CallToken ct){
-        MethodInfo mi = AccessTools.Method(t, ct.method); // does not return extension methods!
+        MethodInfo mi = null;
+
+        try {
+            mi = AccessTools.Method(t, ct.method); // does not return extension methods!
+        } catch( AmbiguousMatchException ){
+            if( ct.argTypes == null )
+                throw;
+
+            mi = AccessTools.Method(t, ct.method, ct.argTypes);
+        }
+
         if( mi != null ) return mi;
 
         // try to find extension method

@@ -1,3 +1,5 @@
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using Verse;
 
 using Blocky.Signs;
@@ -16,5 +18,10 @@ class Test_Extensions {
 
         TestExtensions.Register();
         Expect.Eq(_Building.instance, ExpCompiler.Compile("this.parent.Position.GetEdifice(Find.CurrentMap)", _Comp.instance).Invoke(_Comp.instance));
+
+        Expect.Eq(_Map.instance, ExpCompiler.Compile("_Find.CurrentMap", _Comp.instance).Invoke(_Comp.instance));
+
+        Expect.Eq(0, ExpCompiler.Compile("0", _Comp.instance).Invoke(_Comp.instance));
+        Expect.Eq(_Map.instance.LoadedFullThings[0], ExpCompiler.Compile("_Find.CurrentMap.loadedFullThings[0]", _Comp.instance).Invoke(_Comp.instance));
     }
 }
