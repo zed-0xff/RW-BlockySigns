@@ -2,6 +2,7 @@ using HarmonyLib;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using Verse;
 using Blocky.Core;
@@ -39,6 +40,8 @@ public class Building_Frame : Building_Storage, IObservedThoughtGiver {
         get { return slotGroup.HeldThings.Any(); }
     }
 
+    static readonly FieldInfo fi_subGraphic = HarmonyLib.AccessTools.Field(typeof(Graphic_RandomRotated), "subGraphic");
+
     protected virtual void drawThing(Thing t){
         if( angle < -360 )
             angle += 360;
@@ -48,7 +51,7 @@ public class Building_Frame : Building_Storage, IObservedThoughtGiver {
 
         if( g is Graphic_RandomRotated ){
             // apparel, weapon
-            g = (Graphic)HarmonyLib.AccessTools.Field(typeof(Graphic_RandomRotated), "subGraphic").GetValue(g);
+            g = (Graphic)fi_subGraphic.GetValue(g);
         } else if( t is Corpse ){
             t.DrawAt(drawPos);
             return;
