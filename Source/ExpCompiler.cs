@@ -32,6 +32,8 @@ static class ExpCompiler {
 
     public abstract class Token {
         public abstract string Original{ get; }
+
+        public Type typeHint = null;
     }
 
     public class ImmToken : Token {
@@ -120,6 +122,15 @@ static class ExpCompiler {
                         }
                     }
                     break;
+                case '|':
+                    string typeName = fqmn.Substring(start, i-start);
+                    Type t = AccessTools.TypeByName(typeName);
+                    if( t == null ){
+                        throw new ArgumentException("no type \""+typeName+"\"");
+                    }
+                    tokens.Last().typeHint = t;
+                    start = i+1;
+                    break;
                 case ')':
                 case ']':
                     throw new ArgumentException("unexpected '"+fqmn[i]+"'");
@@ -162,21 +173,23 @@ static class ExpCompiler {
 
         Type lastValueType;
         object obj;
+        Token token = tokens[0];
     
-        if( (tokens[0] as SimpleToken)?.content == "this" ){
+        if( (token as SimpleToken)?.content == "this" ){
             tokens.RemoveAt(0);
             obj = root;
             lastValueType = root.GetType();
             il.Emit(OpCodes.Ldarg_0);
-        } else if( tokens[0] is ImmToken imm) {
+        } else if( token is ImmToken imm) {
             obj = imm.value;
             lastValueType = obj.GetType();
         } else {
             List<string> typeParts = new List<string>();
             Type t = null;
-            while( t == null && tokens[0] is SimpleToken st ){
+            while( t == null && token is SimpleToken st ){
                 typeParts.Add(st.content);
                 tokens.RemoveAt(0);
+                token = tokens[0];
                 t = AccessTools.TypeByName(string.Join(".", typeParts));
             }
             if( t == null ){
@@ -187,7 +200,11 @@ static class ExpCompiler {
         }
 
         while( tokens.Any() ){
-            Token token = tokens[0];
+            if( token != null && token.typeHint != null ){
+                lastValueType = token.typeHint;
+            }
+
+            token = tokens[0];
             tokens.RemoveAt(0);
 
             if( token is ImmToken it ){
@@ -195,23 +212,34 @@ static class ExpCompiler {
                 continue;
             }
 
-            if( obj == null && lastValueType != null ){
+            if( obj == null ){
                 // ${Find.DesignatorManager.SelectedDesignator.GetType()}
-                if( lastValueType.IsAbstract ){
-                    obj = new object();
-                } else {
-                    obj = Activator.CreateInstance(lastValueType);
+                if( lastValueType != null && !lastValueType.IsAbstract ){
+                    try{
+                        obj = Activator.CreateInstance(lastValueType);
+                    } catch( MissingMethodException ){
+                        // Default constructor not found for type RimWorld.Designator_Build
+                    }
                 }
             }
 
             if( token is SimpleToken st ){
                 // field
-                FieldInfo fi = AccessTools.Field((obj is Type) ? (Type)obj : obj.GetType(), st.content);
-                if( fi != null ){
-                    if( !fi.IsStatic && (obj == null || obj is Type) )
-                        throw new ArgumentException("non-static field " + fi + " on no object");
+                FieldInfo fi;
+                if( obj is null )
+                    fi = AccessTools.Field(lastValueType, st.content);
+                else
+                    fi = AccessTools.Field((obj is Type) ? (Type)obj : obj.GetType(), st.content);
 
-                    obj = fi.GetValue(obj);
+                if( fi != null ){
+                    if( tokens.Count() > 0 ){
+                        // ${Find.DesignatorManager.SelectedDesignator.isOrder}
+                        // check only if it's not last token
+                        if( !fi.IsStatic && (obj == null || obj is Type) )
+                            throw new ArgumentException("non-static field " + fi + " on no object");
+                        obj = fi.GetValue(obj);
+                    }
+
                     lastValueType = fi.FieldType;
                     il.Emit(fi.IsStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, fi);
                     
@@ -219,7 +247,9 @@ static class ExpCompiler {
                 }
                 // fi == null, try as getter
                 // intentional fallback to CallToken check
-                token = new CallToken("get_" + st.content, null);
+                CallToken newToken = new CallToken("get_" + st.content, null);
+                newToken.typeHint = token.typeHint;
+                token = newToken;
             }
 
             if( token is CallToken ct ){
@@ -237,11 +267,15 @@ static class ExpCompiler {
                         ct.argTypes = new Type[]{ subValue.GetType() }; // XXX may be a subtype
                     }
 
-                    mi = getMethodInfo((obj is Type) ? (Type)obj : obj.GetType(), ct);
+                    if( obj == null && lastValueType != null )
+                        mi = getMethodInfo(lastValueType, ct);
+                    else
+                        mi = getMethodInfo((obj is Type) ? (Type)obj : obj.GetType(), ct);
+
                     if( mi == null )
                         throw new ArgumentException("no method " + ct.Original + " on " + (obj == null ? "Null" : obj.GetType()));
-                    if( !mi.IsStatic && (obj == null || obj is Type) )
-                        throw new ArgumentException("non-static method " + mi + " on no object");
+//                    if( !mi.IsStatic && (obj == null || obj is Type) )
+//                        throw new ArgumentException("non-static method " + mi + " on no object");
 
                     // this.parent.Position.GetEdifice(Find.CurrentMap)
                     //                      ^^^^^^^^^^ extension method
@@ -251,13 +285,16 @@ static class ExpCompiler {
                         il.Emit(OpCodes.Unbox_Any, ptype);
                     }
                 } else {
-                    mi = getMethodInfo((obj is Type) ? (Type)obj : obj.GetType(), ct);
+                    if( obj == null && lastValueType != null )
+                        mi = getMethodInfo(lastValueType, ct);
+                    else
+                        mi = getMethodInfo((obj is Type) ? (Type)obj : obj.GetType(), ct);
                 }
 
                 if( mi == null )
-                    throw new ArgumentException("no method " + ct.Original + " on " + (obj == null ? "Null" : obj.GetType()));
-                if( !mi.IsStatic && (obj == null || obj is Type) )
-                    throw new ArgumentException("non-static method " + mi + " on no object");
+                    throw new ArgumentException("no method " + ct.Original + " on obj:" + obj + " lt:" + lastValueType);
+//                if( !mi.IsStatic && (obj == null || obj is Type) )
+//                    throw new ArgumentException("non-static method " + mi + " on no object");
 
                 il.Emit(mi.IsStatic ? OpCodes.Call : OpCodes.Callvirt, mi);
 
