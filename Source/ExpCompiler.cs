@@ -148,24 +148,14 @@ static class ExpCompiler {
     static DynInvoker FastCallTokenized( TokenList tokens, object root){
         DynamicMethod dynMethod = new DynamicMethod("", typeof(object), new Type[]{typeof(object)}, restrictedSkipVisibility: true);
         ILGenerator il = dynMethod.GetILGenerator(256);
+        var lRet = il.DefineLabel();
+        var localVar = il.DeclareLocal(typeof(object));
 
         // syntax sugar
         if( (tokens[0] as SimpleToken)?.content == "parent" ){
             tokens.Insert(0, new SimpleToken("this"));
         }
 
-        Type lastValueType = FastCallTokenizedInt( tokens, root, il );
-
-        if (lastValueType.IsValueType){
-            il.Emit(OpCodes.Box, lastValueType); // convert int/float/... into an object
-        }
-
-        il.Emit(OpCodes.Ret);
-
-        return (DynInvoker)dynMethod.CreateDelegate(typeof(DynInvoker));
-    }
-
-    static Type FastCallTokenizedInt( TokenList tokens, object root, ILGenerator il ){
         if( tokens.Count() < 1 ){
             throw new ArgumentException("don't know how to parse " + tokens.Count() + " arg(s)");
         }
@@ -203,6 +193,15 @@ static class ExpCompiler {
             if( token is ImmToken it ){
                 il.Emit(OpCodes.Ldc_I4, it.value);
                 continue;
+            }
+
+            if( obj == null && lastValueType != null ){
+                // ${Find.DesignatorManager.SelectedDesignator.GetType()}
+                if( lastValueType.IsAbstract ){
+                    obj = new object();
+                } else {
+                    obj = Activator.CreateInstance(lastValueType);
+                }
             }
 
             if( token is SimpleToken st ){
@@ -262,6 +261,13 @@ static class ExpCompiler {
 
                 il.Emit(mi.IsStatic ? OpCodes.Call : OpCodes.Callvirt, mi);
 
+                // check for null
+                //il.Emit(OpCodes.Dup);
+//                il.Emit(OpCodes.Ldnull);
+//                il.Emit(OpCodes.Ceq);
+//                il.Emit(OpCodes.Br, lRet);
+//
+
                 lastValueType = mi.ReturnType;
 
                 if( tokens.Count() == 0 ){
@@ -280,7 +286,15 @@ static class ExpCompiler {
                 throw new ArgumentException("unexpected token: " + token);
             }
         }
-        return lastValueType;
+
+        if (lastValueType.IsValueType){
+            il.Emit(OpCodes.Box, lastValueType); // convert int/float/... into an object
+        }
+
+        il.MarkLabel(lRet);
+        il.Emit(OpCodes.Ret);
+
+        return (DynInvoker)dynMethod.CreateDelegate(typeof(DynInvoker));
     }
 
     public static MethodInfo getMethodInfo(Type t, CallToken ct){

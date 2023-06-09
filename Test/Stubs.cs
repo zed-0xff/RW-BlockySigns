@@ -41,6 +41,7 @@ public class _Gizmo_RoomStats {
 
 public static class _Find {
     public static _Map CurrentMap { get { return _Map.instance; }}
+    public static _Map anotherMap = null;
 }
 
 public class _Comp {

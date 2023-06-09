@@ -69,7 +69,13 @@ public partial class CompNameable : ThingComp {
     string parseExpressions(string text){
         return Regex.Replace(text, @"\$\{([a-zA-Z0-9_.:()\[\]]+)\}", delegate(Match match) {
                 string fqmn = match.Groups[1].Captures[0].Value;
-                return ExpCompiler.Compile(fqmn, this).Invoke(this).ToString();
+                var ex = ExpCompiler.Compile(fqmn, this);
+
+                try {
+                    return (ex.Invoke(this) ?? "Ø").ToString();
+                } catch( NullReferenceException ){
+                    return "NullRef";
+                } 
         });
     }
 
