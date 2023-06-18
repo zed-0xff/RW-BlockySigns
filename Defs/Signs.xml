@@ -25,6 +25,9 @@
     <thingCategories>
       <li>BuildingsBlocky</li>
     </thingCategories>
+    <modExtensions>
+      <li Class="RedstoneLogic.ExtPistonMoveable" MayRequire="Blocky.RedstoneLogic"/>
+    </modExtensions>
   </ThingDef>
 
   <ThingDef ParentName="Blocky_Signs_Base">
