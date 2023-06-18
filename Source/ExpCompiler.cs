@@ -1,5 +1,6 @@
 using HarmonyLib;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -315,7 +316,19 @@ static class ExpCompiler {
                 if( invoker == null ){
                     obj = mi.Invoke(obj, null);
                 } else if( !mi.IsDefined(typeof(ExtensionAttribute) )){
-                    obj = mi.Invoke(obj, new[]{ subValue } );
+                    try{ 
+                        obj = mi.Invoke(obj, new[]{ subValue } );
+                    } catch(ArgumentOutOfRangeException ex){
+                        if( Prefs.DevMode ){
+                            Log.Warning("[d] " + ex);
+                        }
+                        // trying to get list[x] while compile-time list is smaller than at runtime
+                        if( !(subValue is int i) ) throw;
+                        if( !(obj is IEnumerable e)) throw;
+                        if( i == 0 ) throw;
+
+                        obj = e.GetEnumerator().Current;
+                    }
                 } else {
                     obj = mi.Invoke(obj, new[]{ obj, subValue } );
                 }
