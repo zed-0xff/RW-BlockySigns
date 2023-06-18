@@ -7,8 +7,8 @@
         <thingDefs>
           <li>Blocky_Signs_ItemFrame</li>
           <li>Blocky_Signs_GlowItemFrame</li>
-          <li>Blocky_Signs_SmallItemFrame</li>
-          <li>Blocky_Signs_SmallGlowItemFrame</li>
+          <li MayRequire="LWM.DeepStorage">Blocky_Signs_SmallItemFrame</li>
+          <li MayRequire="LWM.DeepStorage">Blocky_Signs_SmallGlowItemFrame</li>
         </thingDefs>
       </li>
     </value>
