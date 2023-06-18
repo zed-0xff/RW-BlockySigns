@@ -13,7 +13,7 @@ public class Patch__HaulAIUtility__FrameAcceptSingleItem
     {
         if( __result == null ) return;
 
-        if( Cache<Building_Frame>.Get(storeCell, p.Map) is Building_Frame f ){
+        if( ThingCache<Building_Frame>.Get(storeCell, p.Map) is Building_Frame f ){
             if( f.Occupied ){
                 __result = null;
             } else {

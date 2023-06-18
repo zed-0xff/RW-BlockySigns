@@ -10,7 +10,7 @@ static class Patch_AllowFramesInWalls {
     static void Postfix(ref bool __result, IntVec3 c, Map map){
         if( __result ) return;
 
-        if( Cache<Building_Frame>.Get(c, map) is Building_Frame f && !f.Occupied ){
+        if( ThingCache<Building_Frame>.Get(c, map) is Building_Frame f && !f.Occupied ){
             __result = true;
         }
     }

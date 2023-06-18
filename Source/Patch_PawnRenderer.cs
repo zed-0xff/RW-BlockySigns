@@ -20,7 +20,7 @@ class Patch__PawnRenderer__InFrameAngle
         var corpse = ___pawn.Corpse;
         if( corpse == null ) return;
 
-        if( Cache<Building_Frame>.Get(corpse.Position, corpse.Map) is Building_Frame f ){
+        if( ThingCache<Building_Frame>.Get(corpse.Position, corpse.Map) is Building_Frame f ){
             __result = f.angle;
         }
     }

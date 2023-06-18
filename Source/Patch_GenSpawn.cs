@@ -28,7 +28,7 @@ public class Patch_GenSpawn {
         public static bool Prefix(Thing thing, Map map)
         {
             if( !g_respawningAfterLoad ) return true;
-            bool hasFrame = ( Cache<Building_Frame>.Get(thing.Position, map) != null );
+            bool hasFrame = ( ThingCache<Building_Frame>.Get(thing.Position, map) != null );
 
 //            if( Blocky.Core.Settings.Debug ){
 //                Log.Warning("[d] Refund: " + thing + " hasFrame: " + hasFrame);

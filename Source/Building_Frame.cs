@@ -19,11 +19,11 @@ public class Building_Frame : Building_Storage, IObservedThoughtGiver {
 
     public override void SpawnSetup(Map map, bool respawningAfterLoad){
         base.SpawnSetup(map, respawningAfterLoad);
-        Cache<Building_Frame>.Add(this, map);
+        ThingCache<Building_Frame>.Add(this, map);
     }
 
     public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish){
-        Cache<Building_Frame>.Remove(this);
+        ThingCache<Building_Frame>.Remove(this);
         base.DeSpawn(mode);
     }
 
@@ -140,7 +140,7 @@ public class Building_Frame : Building_Storage, IObservedThoughtGiver {
             int map_id = -1;
             Scribe_Values.Look(ref map_id, "map");
             if( map_id >= 0 ){
-                Cache<Building_Frame>.Add(this, map_id);
+                ThingCache<Building_Frame>.Add(this, map_id);
             }
         }
     }
