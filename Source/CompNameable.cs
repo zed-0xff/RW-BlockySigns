@@ -75,7 +75,9 @@ public partial class CompNameable : ThingComp {
                     return (ex.Invoke(this) ?? "Ø").ToString();
                 } catch( NullReferenceException ){
                     return "NullRef";
-                } 
+                } catch ( ArgumentOutOfRangeException ){
+                    return "OutOfRange";
+                }
         });
     }
 
