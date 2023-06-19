@@ -1,6 +1,8 @@
 # Blocky Signs
 [![Blocky Signs](About/Preview.png)](https://steamcommunity.com/sharedfiles/filedetails/?id=2985030059)
 
+Not official Minecraft product. Not approved by or associated with Mojang or Microsoft.
+
 ## Sign
 
 ![](screens/signs.jpg)
