@@ -38,7 +38,12 @@ public partial class CompNameable : ThingComp {
             icon = TexButton.Rename,
             hotKey = KeyBindingDefOf.Misc3,
             action = delegate{
-                Find.WindowStack.Add(new Dialog_Rename(this));
+                var dialog = new Dialog_Rename(this);
+                if (KeyBindingDefOf.Misc3.IsDown)
+                {
+                    dialog.WasOpenedByHotkey();
+                }
+                Find.WindowStack.Add(dialog);
             }
         };
         yield return new Command_ColorIcon {

@@ -15,6 +15,7 @@ public class Building_Frame : Building_Storage, IObservedThoughtGiver {
 
     const float itemWealthMultiplier = 0.25f; // jsut hardcode for now
 
+    // XXX field is accessed by RedstoneLogic, do not change
     public float angle = 0;
 
     public override void SpawnSetup(Map map, bool respawningAfterLoad){
